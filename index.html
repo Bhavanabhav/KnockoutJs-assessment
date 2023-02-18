@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <link href="css/fonts.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="Scripts/jquery-3.6.3.min.js"></script>
+    <script src="Scripts/knockout-min.js"></script>
+    <script src="css/styles.css"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Maintain Products</h2>
+                <label for="exampleInputEmail1" class="form-label">Product Number</label>
+                <input id="productNumber" data-bind="value: productNumber" class="form-control" /><br />
+                <label for="exampleInputEmail1" class="form-label">Product Description</label>
+                <input id="productDescription" data-bind="value: productDescription" class="form-control" /><br />
+
+                <label for="exampleInputEmail1" class="form-label">Active Product ?</label>
+                <div class="mb-3">
+                    <input type="checkbox" class="form-check-input" data-bind="checked: yeschecked" />
+                    <label class="form-check-label" for="exampleCheck1">Yes</label>
+                </div>
+                <br />
+
+                <div data-bind="visible: radioClass">
+                    <label for="exampleInputEmail1" class="form-label">Product Class</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="flavorGroup" value="bicycle"
+                                data-bind="checked: optionClass" />
+                            Bicycles(100)
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="flavorGroup" value="accesories"
+                                data-bind="checked: optionClass" />
+                            Accesories(200)
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="flavorGroup" value="clothing"
+                                data-bind="checked: optionClass" />
+                            Clothing(300)
+                        </div>
+                    </div>
+                </div><br />
+                <label for="exampleInputEmail1" class="form-label">Unit of measurement</label>
+                <select class="form-control" data-bind="value: selectedValue">
+                    <option value="BC">BC</option>
+                    <option value="EA">EA</option>
+                    <option value="AB">AB</option>
+                    <option value="BB">BB</option>
+                </select><br />
+                <label for="exampleInputEmail1" class="form-label">Suggested Vendor </label>
+                <select class="form-control" data-bind="value: suggestedVendor">
+                    <option value="acme">ACME Suppliers</option>
+                    <option value="abb">ABB Providers</option>
+                    <option value="ssc">SSC suppliers</option>
+
+                </select> <br />
+
+                <input class="btn btn-success" type="button" data-bind="click:saveToJson" value="Accept" />
+                <div data-bind="text: details"></div>
+
+
+            </div>
+            <div class="col-md-6">
+                <div class="seconddiv">
+                    <label for="exampleInputEmail1" class="form-label">Weight Per Unit of measure </label>
+                    <input type="number" id="unitMeasure" data-bind="value: unitMeasure" class="form-control" /><br />
+
+                    <label for="exampleInputEmail1" class="form-label">List Price </label>
+                    <div data-bind="numericText: myValue, precision: myPrecision">
+                        <input data-bind="value: myValue" class="form-control" />
+                    </div><br />
+
+                    <label for="exampleInputEmail1" class="form-label">Country of origin</label>
+                    <input type=" text" data-bind="value: country" class="form-control"><br />
+                    <label for="exampleInputEmail1" class="form-label">Lastest Revision Date</label>
+                    <input type="date" data-bind="value: date" class="form-control"><br />
+                    <label for="exampleInputEmail1" class="form-label">Long Description </label>
+                    <div class="mb-3">
+
+                        <textarea class="form-control" data-bind="value: description" id="exampleFormControlTextarea1"
+                            rows="3"></textarea>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                var product = {
+                    productNumber: ko.observable("112"),
+                    productDescription: ko.observable("mobile"),
+                    unitMeasure: ko.observable("000"),
+                    yeschecked: ko.observable(true),
+                    radioClass: ko.observable(true),
+                    optionClass: ko.observable("accesories"),
+                    selectedValue: ko.observable(),
+                    suggestedVendor: ko.observable(),
+                    myValue: ko.observable(123.55454),
+                    myPrecision: ko.observable(3),
+                    country: ko.observable("India"),
+                    date: ko.observable(),
+                    description: ko.observable(),
+                    details: ko.observable()
+                };
+
+                product.productNumber.subscribe(function (newValue) {
+                    console.log(newValue);
+                });
+                product.saveToJson = function () {
+                    const jsonData = ko.toJSON(product);
+                    const promise = fetch(" http://localhost:3000/product", {
+                        method: 'post',
+                        body: jsonData,
+                        headers: {
+                            'content-type': 'application/json'
+                        }
+                    });
+
+                    promise.then(function (data) {
+                        // alert('success');
+                        product.details("success")
+                        console.log(data);
+                    })
+
+                    $("#result").text(jsonData);
+                };
+
+                ko.applyBindings(product);
+            });
+
+
+        </script>
+
+</body>
+
+</html>
